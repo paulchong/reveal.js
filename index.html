@@ -20,6 +20,8 @@
 	<!-- For syntax highlighting -->
 	<link rel="stylesheet" href="lib/css/zenburn.css">
 
+	<link rel="shortcut icon" href="images/favicon.ico" />
+
 	<!-- If the query includes 'print-pdf', use the PDF print sheet -->
 	<script>
 	document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
@@ -92,6 +94,42 @@ var Restaurant = {
 					</section>
 					
 					<section>
+						<h2>Guest Session Key</h2>
+						<pre><code data-trim contenteditable>
+//  url
+/restaurants/1/reservations/1?guest=unique_key
+
+//  reservation.rb (model)
+  before_create :generate_unique_key
+
+  def generate_unique_key
+    self.unique_key = SecureRandom.hex(10)
+  end
+
+//  application_controller.rb (helper methods)
+  def guest_access
+    reservation = Reservation.find(params[:id])
+    guest_key == reservation.unique_key
+  end
+
+  def guest_key
+    params[:guest]
+  end
+
+//  reservations_controller.rb (guest view)
+  before_filter :authenticate_guest, :only => [:show]
+
+  private
+  def authenticate_guest
+    redirect_to root_path unless guest_access
+  end
+
+//  bitly_helper.rb
+  bitly.shorten('http://noreservations.herokuapp.com/restaurants/'+restaurant_id+'/reservations/'+id+'?guest='+unique).short_url
+						</code></pre>
+					</section>
+
+					<section>
 						<h2>THIS THAT</h2>
 						<pre><code data-trim contenteditable>
 var Message = {
@@ -131,29 +169,32 @@ $(document).ready(function(){
 					<section>
 						<h2>Before Refactoring</h2>
 						<pre><code data-trim contenteditable>
-var reloadStatusId = function() {
-  var element = $('.status');
-  for(var i=0; i< element.length; i++){
-    var statusText = element[i].innerHTML;
-    if (statusText == 'Waiting') {
-      var statusId = 'status-waiting';
-    } else if (statusText == 'Cancelled') {
-      statusId = 'status-cancelled';
-    } else if (statusText == 'No-Show') {
-      statusId = 'status-no-show';
-    } else if (statusText == 'Seated') {
-      statusId = 'status-seated';
-    }
-  $($('span.status')[i]).removeAttr('id').attr('id', statusId);
+var updateStatusId = function(data) {
+ var statusText = data.status;
+ if (statusText == 'Waiting') {
+  var statusId = 'status-waiting';
+  } else if (statusText == 'Cancelled') {
+    statusId = 'status-cancelled';
+  } else if (statusText == 'No-Show') {
+    statusId = 'status-no-show';
+  } else if (statusText == 'Seated') {
+    statusId = 'status-seated';
   }
+  return statusId;
 }
-		</code></pre>
+// AJAX done.
+var statusId = updateStatusId(data);
+  $that.closest(".reservation").find("span.status").removeAttr('id').attr('id', statusId);
+
+
+						</code></pre>
 					</section>
 					<section>
 						<h2>After Refactoring</h2>
 						<pre><code data-trim contenteditable>
-$that.closest(".reservation").find("span.status").removeAttr('id').attr('id', "status-"+data.status.toLowerCase());	
-		</code></pre>
+// AJAX done.
+$that.closest(".reservation").find("span.status").removeAttr('id').attr('id', data.status);
+  					</code></pre>
 					</section>
 
 
@@ -164,8 +205,8 @@ $that.closest(".reservation").find("span.status").removeAttr('id').attr('id', "s
 					<h2>Lessons Learned</h2>
 					<ul>
 						<li>Team Dynamics</li>
-						<li>Tests</li>
 						<li>Clean Master</li>
+						<li>Tests and Coverage</li>
 					</ul>
 				</section>
 
