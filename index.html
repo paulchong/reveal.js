@@ -2,9 +2,10 @@
 <html lang="en">
 
 <head>
+	<link rel="shortcut icon" href="http://sstatic.net/stackoverflow/img/favicon.ico">
 	<meta charset="utf-8">
 
-	<title>noReservations - Restaurant Wait-lists Made Easy!</title>
+	<title>Analytics Reporting Workshop - Jan 29th 2013</title>
 
 	<meta name="description" content="A mobile and web app that removes the frustration of restaurant reservations">
 	<meta name="author" content="Team Wait-For-It">
@@ -39,187 +40,185 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h1>Analytics Workshop</h1>
-					<h3>Restaurant Wait-lists Made Easy</h3>
-					<p>
-						<small>Created by <a href="http://noreservations.herokuapp.com/">Team Wait-For-It</a> </small>
-					</p>
-					<img border="0" src="images/reservations_sign.jpg" alt="reservation sign" >
-
-
-				</section>
-
-				<section>
-					<h2>Introducing...</h2>
-					<p>Natalie Uduwela</p>
-					<p>Laura Mead</p>
-					<p>Jeff Edwards</p>
-					<p>Paul Chong </p>
+					<h1>Zynga Analytics Workshop</h1>
 					
-					<aside class="notes">
-						Feel free to add any notes about the team
-					</aside>
+					<h3>January 29th, 2014</h3>
+
+
+						<small> 
+							<p>Paul Chong,  PM</p>
+							<p>Samson Koshy,  Architect</p>
+							<p>Andy Veluswami,  Analyst Director</p>
+							<p>Chris Thoms,  Analyst</p>
+						</small>		
 				</section>
 
 				<section>
-					<h2>A Problem You've Likely Seen Before</h2>
-					<img border="0" src="images/wait-list.jpg" alt="people waiting" >
+					<h2>Workshop Objectives</h2>
+					</br>
+					<ol>
+						<li>Identify your analysis painpoints and nice-to-haves</li>
+						</br>
+						<li>Demo Analytics tools</li>
+					</ol>			
 				</section>
 
 				<section>
-					<h2>Our Solution</h2>
-					<p class="fragment">						
-						<img border="0" src="images/app-screenshot.png" alt="reservation sign" >
-					</p>
+					<h2>Workshop Scope</h2>
+					</br>	
+					<p>Analysis and Reporting Tools - 'Data-Output'</p>
+					</br>	
+					<p class='fragment'>Q1 Commitment: Improve Your Satisfaction by 30%</p>
+					
 				</section>
+
+
+				<section>
+					<h2>Analytics Toolkit</h2>
+					</br>
+					<p>Stats.Zynga Portal</p>
+					<p>Tableau / Big Data Slicer</p>
+					<p>Scripted-R Reports</p>
+					<p>Streaming Reporting</p>
+					<p>Trip Alerts</p>
+					<p>Analytics Training</p>
+					
+				</section>
+
 
 				<section>	
 					<section>
-						<h2>Snippets of Lovely Code</h2>
-						<p>A few lines from the highlight reel</p>
-						<pre><code data-trim contenteditable>
-var Restaurant = {
+						<h2>Stats.Zynga Portal</h2>
+					<p>						
+						<img border="0" src="images/stats_zynga_screenshot.png" alt="stats.zynga screenshot" >
+					</p>
 
-  toggleLogin: function(e) {
-    e.preventDefault()
-    $(".restaurant-login").slideToggle("slideDown")
-  },
-
-  showRegister: function(e, registerPage) {
-    $("#container").addClass("hidden").html(registerPage)
-    $("#container").slideDown()
-  }
-}
-		</code></pre>
 					</section>
 					
 					<section>
-						<h2>Guest Session Key</h2>
-						<pre><code data-trim contenteditable>
-//  url
-/restaurants/1/reservations/1?guest=unique_key
-
-//  reservation.rb (model)
-  before_create :generate_unique_key
-
-  def generate_unique_key
-    self.unique_key = SecureRandom.hex(10)
-  end
-
-//  application_controller.rb (helper methods)
-  def guest_access
-    reservation = Reservation.find(params[:id])
-    guest_key == reservation.unique_key
-  end
-
-  def guest_key
-    params[:guest]
-  end
-
-//  reservations_controller.rb (guest view)
-  before_filter :authenticate_guest, :only => [:show]
-
-  private
-  def authenticate_guest
-    redirect_to root_path unless guest_access
-  end
-
-//  bitly_helper.rb
-  bitly.shorten('http://noreservations.herokuapp.com/restaurants/'+restaurant_id+'/reservations/'+id+'?guest='+unique).short_url
-						</code></pre>
+						<h2>Tableau / Big Data Slicer</h2>
+					<p>						
+						<img border="0" src="images/tableau_screenshot.png" alt="stats.zynga screenshot" >
+					</p>	
 					</section>
 
 					<section>
-						<h2>THIS THAT</h2>
-						<pre><code data-trim contenteditable>
-var Message = {
-  sendTextTableReady: function(reservationId){
-    var that = this
-    $.ajax({
-      url: "/messages",
-      type: "post",
-      data: {id: reservationId},
-      data_type: "json"
-    }).done(function(){
-      $(that).removeClass("message-ready")
-      $(that).html("sent")
-      $(that).addClass("ready-message-sent")
-      $("error-message").empty()
-    }).error(function(){
-      $("error-message").text("SMS failed :(")
-    })
-  },
-  SMSButtonEvent: function(){
-    var self = this;
-    $(".table-body").on("click", "div.message-ready", function(){
-      var reservationId = $(this).closest(".reservation").data("id")
-      var boundSendTextTableReady = self.sendTextTableReady.bind(this)
-      boundSendTextTableReady(reservationId)
-    })
-  }
-}
-
-$(document).ready(function(){
-  Message.SMSButtonEvent();
-})
-
-						</code></pre>
+						<h2>Scripted-R Reports</h2>
+						<!-- <p>UPDATE PIC</p> -->
+					<p>						
+						<img border="0" src="images/scripted_r_screenshot.png" alt="stats.zynga screenshot" >
+					</p>							
 					</section>
 
 					<section>
-						<h2>Before Refactoring</h2>
-						<pre><code data-trim contenteditable>
-var updateStatusId = function(data) {
- var statusText = data.status;
- if (statusText == 'Waiting') {
-  var statusId = 'status-waiting';
-  } else if (statusText == 'Cancelled') {
-    statusId = 'status-cancelled';
-  } else if (statusText == 'No-Show') {
-    statusId = 'status-no-show';
-  } else if (statusText == 'Seated') {
-    statusId = 'status-seated';
-  }
-  return statusId;
-}
-// AJAX done.
-var statusId = updateStatusId(data);
-  $that.closest(".reservation").find("span.status").removeAttr('id').attr('id', statusId);
-
-
-						</code></pre>
+						<h2>Streaming Reporting</h2>
+					<p>						
+						<img border="0" src="images/streaming_app_screenshot.png" alt="stats.zynga screenshot" >
+					</p>							
 					</section>
 					<section>
-						<h2>After Refactoring</h2>
-						<pre><code data-trim contenteditable>
-// AJAX done.
-$that.closest(".reservation").find("span.status").removeAttr('id').attr('id', data.status);
-  					</code></pre>
+						<h2>Trip Alerts</h2>
+					<p>						
+						<img border="0" src="images/trip_alert_screenshot.png" alt="stats.zynga screenshot" >
+					</p>							
+						
 					</section>
-
-
-
 				</section>
 
-				<section data-transition="linear" data-background="#4d7e65" data-background-transition="slide">
-					<h2>Lessons Learned</h2>
+				<section>
+					<h2>Why do you use Analytics Tools?</h2>
+					</br>	
+					<ul class='fragment'>
+						<li>Reporting</li>
+						<ul>
+							<small>
+								<li>Daily</li>
+								<li>Product Reviews</li>
+							</small>
+						</ul>					
+						
+						<li>Feature Read-Outs</li>
+							<ul>
+								<small>
+									<li>1-Hour Report</li>
+									<li>7-Day Report</li>
+								</small>
+							</ul>		
+						<li>Spec Writing</li>
+							<ul>
+								<small>
+									<li>Expected Outcomes</li>
+									<li>Benchmark Comps</li>
+								</small>
+							</ul>
+						<li>Automated Notifications</li>
+							<ul>
+								<small>
+									<li>Email Subscriptions</li>
+									<li>On-Call Alerts</li>
+								</small>
+							</ul>
+					</br>
+						<li>What Else?</li>
+
+					</ul>					
+				</section>
+
+				<section>
+					<h2>What We've Heard</h2>
+					</br>	
 					<ul>
-						<li>Team Dynamics</li>
-						<li>Clean Master</li>
-						<li>Tests and Coverage</li>
-					</ul>
+						<li>Analysis Pain-Points</li>
+							<ul>
+								<small>
+									<li>Speed of Data Queries</li>
+									<li>Difficulty Finding Right Report</li>
+									<li>Complex Onboarding New Hires</li>
+									<li>Others?</li>
+								</small>
+							</ul>					
+					</ul>					
+						</br>
+						</br>
+					<ul class='fragment'>					
+						<li >Nice-to-Haves</li>
+							<ul>
+								<small>
+									<li>Dynamic Visualization Options</li>
+									<li>Detailed LTV Calculations</li>
+									<li>Others?</li>
+								</small>
+							</ul>		
+					</ul>					
 				</section>
+
 
 				<section>
-					<h2>Questions?</h2>
+					<h2>Tools Demo</h2>
+					<ol class='fragment'>					
+						<li>Scripted-R Reports</li>
+						<li>Streaming Reporting</li>
+						<li>Tableau/Big Data Slicer</li>
+					</ol>		
 				</section>
 
 
 				<section>
-					<h2>the end</h2>
+					<h2>Next Steps</h2>
+					</br>	
+					<ul>
+						<li>Examine and incorporate your feedback in our Q1 initiatives roadmap</li>
+					</br>	
+						<li>Socialize resulting initiatives through embedded analysts and weekly Analytics email updates</li>
+					</br>	
+						<li>Close loop with follow-on workshop in two months</li>
+					</ul>			
 				</section>
 
 
+				<section>
+					<h2>Thanks!</h2>
+				</section>
 
 				<section data-markdown>
 					<script type="text/template">
